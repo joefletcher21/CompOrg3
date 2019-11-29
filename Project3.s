@@ -43,3 +43,52 @@ loop:
 	beq $s0, 10, next #checks if the bit is a new line 	
 	addi $t0,$t0,1 #move the $t0 to the next element of the array	
 	beq $s0, 44, substring #check if bit is a comma
+check:
+	bgt $t2,0,invalidloop #checks to see if there were any spaces or tabs in between valid characters
+	beq $s0, 9,  gap #checks to see if there is a tab characters
+	beq $s0, 32, gap #checks to see if there is a space character
+	ble $s0, 47, invalidloop # checks to see if the ascii less than 48
+	ble $s0, 57, vaild # checks to see if the ascii less than 57(integers)
+	ble $s0, 65, invalidloop # checks to see if the ascii less than 65
+	ble $s0, 90, vaild	# checks to see if the ascii less than 90(capital letters- Y)
+	ble $s0, 96, invalidloop # checks to see if the ascii less than 96
+	ble $s0, 122, vaild 	# checks to see if the ascii less than 122(lowercase letters - y)
+	bge $s0, 123, invalidloop # checks to see if the ascii greater than 116
+
+
+
+gap:
+	addi $t2,$t2,-1 #keeps track of spaces/tabs
+	j loop
+
+vaild:
+	addi $t3, $t3,1 #keeps track of how many valid characters are in the substring
+	mul $t2,$t2,$t6 #if there was a space before a this valid character it will change $t2 to a positive number
+	j loop #jumps to the beginning of loop	
+
+invalidloop:
+	
+	lb $s0, ($t0) # loads the bit that $t0 is pointing to
+	beq $s0, 0, insubstring# check if the bit is null
+	beq $s0, 10, insubstring #checks if the bit is a new line 	
+	addi $t0,$t0,1 #move the $t0 to the next element of the array	
+	beq $s0, 44, insubstring #check if bit is a comma
+	
+	
+	j invalidloop #jumps to the beginning of loop
+
+insubstring:
+	
+	addi $t1,$t1,1 #keeps track of the amount substring 	
+	sub $sp, $sp,4# creates space in the stack
+	
+	sw $t6, 0($sp) #stores what was in $t5 into the stack
+	
+	move $t5,$t0  # store the pointer to the bit after the comma
+	lb $s0, ($t0) # loads the bit that $t0 is pointing to
+	beq $s0, 0, continue1# check if the bit is null
+	beq $s0, 10, continue1 #checks if the bit is a new line 
+	beq $s0,44, invalidloop #checks if the next bit is a comma
+	li $t3,0 #resets the amount of valid characters back to 0
+	li $t2,0 #resets my space/tabs checker back to zero
+	j start
