@@ -190,3 +190,24 @@ done:
 	li $v0, 1
 	lw $a0, 0($sp) #prints element
 	syscall
+com:
+	beq $t1, 0,Exit #if there are now elements left it terminates the program
+	li $v0, 4
+	la $a0, comma #prints a comma
+	syscall
+	j done
+invalidprint:
+	
+	li $v0, 4
+	
+	la $a0, notvalid #prints a nonvaild input
+	syscall	
+	j com #jumps to print a comma
+	
+
+
+
+	
+Exit:
+	li $v0, 10
+	syscall
