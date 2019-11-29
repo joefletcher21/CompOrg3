@@ -92,3 +92,43 @@ insubstring:
 	li $t3,0 #resets the amount of valid characters back to 0
 	li $t2,0 #resets my space/tabs checker back to zero
 	j start
+substring:
+	mul $t2,$t2,$t6 #if there was a space before a this valid character it will change $t2 to a positive number
+next:
+	bgt $t2,0,insubstring #checks to see if there were any spaces or tabs in between valid characters
+	bge $t3,5,insubstring #checks to see if there are more than 4 for characters
+	addi $t1,$t1,1 #check track of the amount substring 	
+	sub $sp, $sp,4 # creates space in the stack
+	sw $t5, 0($sp) #stores what was in $t5 into the stack
+	move $t5,$t0  # store the pointer to the bit after the comma
+	lw $t4,0($sp) #loads what was in the stack at that posistion into $t4
+	li $s1,0 #sets $s1 to 0 
+	jal SubprogramB
+	lb $s0, ($t0) # loads the bit that $t0 is pointing to
+	beq $s0, 0, continue1 # check if the bit is null
+	beq $s0, 10, continue1 #checks if the bit is a new line 
+	beq $s0,44, invalidloop #checks if the next bit is a comma
+	li $t2,0 #resets my space/tabs checker back to zero
+	j start
+
+
+
+
+SubprogramB:
+	beq $t3,0,finish #check how many charcter are left to convert 
+	addi $t3,$t3,-1 #decreases the amount of charaters left to convert
+	lb $s0, ($t4) # loads the bit that will be converted
+	
+	addi $t4,$t4,1	# moves to the next element in the array
+	j SubprogramC 
+continue:
+	
+	sw $s1,0($sp)	#stores the converted number
+	j SubprogramB
+
+SubprogramC:
+	move $t8, $t3	#stores the amount of characters left to use as an exponent
+	li $t9, 1	# $t9 represents 30 to a certian power and set equal to 1
+	ble $s0, 57, num #sorts the bit to the apporiate function
+	ble $s0, 84, upper
+	ble $s0, 116, lower
