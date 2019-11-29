@@ -55,8 +55,6 @@ check:
 	ble $s0, 122, vaild 	# checks to see if the ascii less than 122(lowercase letters - y)
 	bge $s0, 123, invalidloop # checks to see if the ascii greater than 116
 
-
-
 gap:
 	addi $t2,$t2,-1 #keeps track of spaces/tabs
 	j loop
@@ -111,9 +109,6 @@ next:
 	li $t2,0 #resets my space/tabs checker back to zero
 	j start
 
-
-
-
 SubprogramB:
 	beq $t3,0,finish #check how many charcter are left to convert 
 	addi $t3,$t3,-1 #decreases the amount of charaters left to convert
@@ -164,8 +159,6 @@ combine:
 	add $s1,$s1,$s2		# adding the coverted numbers together 
 	j continue
 
-
-
 	
 finish : jr $ra	#jumps back to substring
 
@@ -202,12 +195,7 @@ invalidprint:
 	
 	la $a0, notvalid #prints a nonvaild input
 	syscall	
-	j com #jumps to print a comma
-	
-
-
-
-	
+	j com #jumps to print a comma	
 Exit:
 	li $v0, 10
 	syscall
