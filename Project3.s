@@ -132,3 +132,61 @@ SubprogramC:
 	ble $s0, 57, num #sorts the bit to the apporiate function
 	ble $s0, 84, upper
 	ble $s0, 116, lower
+num:
+	
+	sub $s0, $s0, 48	#converts interger bits 
+	beq $t3, 0, combine	# if there are no charaters left that mean the exponent is zero
+	li $t9, 30		
+	j exp
+
+upper:
+	
+	sub $s0, $s0, 55 #converts uppercase bits
+	beq $t3, 0, combine # if there are no charaters left that mean the exponent is zero
+	li $t9, 30
+	j exp
+
+lower:
+	
+	sub $s0, $s0, 87 #converts lowercase bits
+	beq $t3, 0, combine # if there are no charaters left that mean the exponent is zero
+	li $t9, 30
+	j exp
+exp:
+	#raises my base to a certain exponent by muliplying itself repeatly
+	ble $t8, 1, combine	#if the exponet is 1 there is no need to multiply the base by itself
+	mul $t9, $t9, 30 	# multpling my base by itself to simulate raising the number to a power
+	addi $t8, $t8, -1	# decreasing the exponent
+	j exp
+combine:
+	mul $s2, $t9, $s0	#multiplied the converted bit and my base raised to a power
+	
+	add $s1,$s1,$s2		# adding the coverted numbers together 
+	j continue
+
+
+
+	
+finish : jr $ra	#jumps back to substring
+
+
+
+print:
+	mul $t1,$t1,4 #getting the amount of space needed to move the stack pointer to the beginning of the stack
+	add $sp, $sp $t1 #moving the stack pointer to the beginning of the stack
+		
+done:	
+	
+	
+	sub $t1, $t1,4	#keeping track of amount of elements left
+	sub $sp,$sp,4 #moving the stack pointer to the next element
+
+		
+	lw $s7, 0($sp)	#storing that element into $s7
+	
+	beq $s7,-1,invalidprint #checks to see if element is invalid
+	
+	
+	li $v0, 1
+	lw $a0, 0($sp) #prints element
+	syscall
